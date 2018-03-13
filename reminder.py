@@ -62,14 +62,17 @@ class Reminder(object):
                 return self.cache['groups'][subdestination]
         return None
 
+    def execute_once(self):
+        cronlines = self.get_cronlines()
+        for cline in cronlines:
+            execute = False
+            if cline.execute_now():
+                self.execute(cline)
+
     def loop(self):
         now = datetime.datetime.now()
         while True:
-            cronlines = self.get_cronlines()
-            for cline in cronlines:
-                execute = False
-                if cline.execute_now():
-                    self.execute(cline)
+            self.execute_once()
             later = datetime.datetime.now()
             diff = later - now
             seconds = diff.seconds
