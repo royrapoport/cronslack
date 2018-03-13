@@ -28,7 +28,7 @@ Then @royrapoport will get "Hi, this is your 5 minute message!" every 5 minutes.
 * Fetch a legacy API token for your Slack.  By default, cronslack looks for an environmental variable called API_TOKEN to find this token.  If you want to get it some other way, modify token.py appropriately.
 
 * Run 
-> ./reminder.py -s SLACKNAME -c CONFIGCHANNEL -l LOGCHANNEL [-d SECONDSTODELETION]
+> ./cronslack.py -s SLACKNAME -c CONFIGCHANNEL -l LOGCHANNEL [-d SECONDSTODELETION]
 
 `-s is the name of your Slack (everything before '.slack.com')`\
 `-c is the name of the channel where config for this should be.  Keep in mind we're not checking who sent the message, so you might want to make this a private channel just for your use`\
