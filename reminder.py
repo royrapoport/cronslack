@@ -26,7 +26,7 @@ class Reminder(object):
     def log(self, message):
         self.slacker.channel_post(message, self.log_channel_id, link_names=False)
 
-    def execute(self, cline):
+    def execute_cline(self, cline):
         id = self.find_id(cline.destination)
         if not id:
             self.log("Could not find ID for {}".format(destination))
@@ -62,17 +62,18 @@ class Reminder(object):
                 return self.cache['groups'][subdestination]
         return None
 
-    def execute_once(self):
+    def run_once(self):
         cronlines = self.get_cronlines()
         for cline in cronlines:
             execute = False
             if cline.execute_now():
-                self.execute(cline)
+                self.execute_cline(cline)
 
     def loop(self):
         now = datetime.datetime.now()
         while True:
-            self.execute_once()
+            print "Looping at {}".format(time.ctime())
+            self.run_once()
             later = datetime.datetime.now()
             diff = later - now
             seconds = diff.seconds
