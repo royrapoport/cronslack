@@ -4,7 +4,7 @@ import optparse
 
 import reminder
 import slacker
-import token
+import api_token
 
 
 parser = optparse.OptionParser()
@@ -19,7 +19,7 @@ parser.add_option("-d", "--delete-after", type="int", default=600, dest="delete"
 
 (options, args) = parser.parse_args()
 
-api_token = token.token()
+api_token = api_token.token()
 
 slacker = slacker.Slacker(options.slack, api_token)
 

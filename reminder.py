@@ -69,20 +69,33 @@ class Reminder(object):
             if cline.execute_now():
                 self.execute_cline(cline)
 
+    def log_heartbeat(self):
+        """
+        Every 10 minutes, emit a "I'm still alive" Slack message to log channel
+        """
+        now = datetime.datetime.now()
+        if now.minute % 10 == 0:
+            self.log("It's now {} and I'm still running".format(time.ctime()))
+
     def loop(self):
         now = datetime.datetime.now()
         while True:
             print "Looping at {}".format(time.ctime())
             self.run_once()
-            later = datetime.datetime.now()
-            diff = later - now
-            seconds = diff.seconds
-            # self.log("Executed in {} seconds".format(seconds))
-            if later.minute == now.minute:
-                sleep_for = 60 - later.second
-                # self.log("Will sleep for {} seconds".format(sleep_for))
-                time.sleep(sleep_for)
+            self.log_heartbeat()
+            self.sleep_to_next_minute(now)
             now = datetime.datetime.now()
+
+    def sleep_to_next_minute(self, dt_of_previous_minute):
+        """
+        sleep until the beginning of the minute following dt_of_previous_minute
+        """
+
+        later = datetime.datetime.now()
+        diff = later - dt_of_previous_minute
+        if later.minute == dt_of_previous_minute.minute:
+            sleep_for = 60 - later.second
+            time.sleep(sleep_for)
 
     def potential_delete(self, message):
         """
