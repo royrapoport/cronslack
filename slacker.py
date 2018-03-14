@@ -64,6 +64,18 @@ class Slacker(object):
             separator = "&"
         return separator
 
+    def retry_api_call(self, method, url, json, headers, delay=1, increment=2, max_delay=120):
+        while True:
+            try:
+                payload = method(url, json=json, headers=headers)
+                return payload
+            except Exception, e:
+                print "Failed to retrieve {} : {} / {}.  Sleeping {} seconds".format(url, Exception, e, delay)
+                time.sleep(delay)
+                if delay < max_delay:
+                    delay += increment
+                    print "Incrementing delay to {}".format(delay)
+
     def api_call(self, api_endpoint, method=requests.get, json=None, header_for_token=False):
         url = "https://{}.slack.com/api/{}".format(self.slack, api_endpoint)
         headers = {}
@@ -77,7 +89,7 @@ class Slacker(object):
         # print "url: {}".format(url)
         done = False
         while not done:
-            response = method(url, json=json, headers=headers)
+            response = self.retry_api_call(method, url, json=json, headers=headers)
             if response.status_code == 200:
                 done = True
             if response.status_code == 429:
